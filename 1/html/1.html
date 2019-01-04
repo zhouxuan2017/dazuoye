@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+    <style type="text/css">
+    	.ccc
+{
+	float: left;
+	width: 809px;
+	height: 551px;
+}
+.box
+{
+	height: 361px;
+	width: 809px;
+	border-bottom: 2px solid #fe6c00;
+	position: relative;
+	overflow: hidden;
+}
+.slider
+{
+	height: 361px;
+	width: 6472px;
+	position: absolute;
+	left:-809px;
+}
+.slide
+{
+	width: 809px;
+	height: 361px;
+    overflow: hidden;
+    float: left;
+}
+.box>span
+{
+	display: block;
+	width: 55px;
+	height: 55px;
+	text-align: center;
+	cursor: pointer;
+	font-weight: bolder;
+	color: #dabed3;
+	top: 147px;
+	line-height: 40px;
+	background-color: white;
+	font-size: 70px;
+	position: absolute;
+    opacity: 0;
+}
+#left
+{
+	left: 17px;
+}
+#right
+{
+	right: 17px;
+}
+
+
+.nav{
+	position: absolute;
+	left: 331px;
+	bottom: 18px;
+}
+.nav>li
+{
+	float: left;
+	width: 20px;
+	height: 20px;
+	background: #efeeec;
+	cursor: pointer;
+	margin:0 10px;
+	border-radius: 50%;
+}
+.nav .active
+{
+
+	background-color: #d27533;
+	
+}
+
+    </style>
+    <link rel="stylesheet" type="text/css" href="../css/index.css">
+</head>
+<body>
+	<div class="ccc">
+	      	<div  class="box" id="box">
+	      		<div  class="slider" id="slider">
+	      			<div class="slide"><img src="../任务所需小图/img/bann6.png" alt=""></div>
+	      			<div class="slide"><img src="../任务所需小图/img/bann1.jpeg" alt=""></div>
+	      			<div class="slide"><img src="../任务所需小图/img/bann2.jpeg" alt=""></div>
+	      			<div class="slide"><img src="../任务所需小图/img/bann3.jpeg" alt=""></div>
+	      			<div class="slide"><img src="../任务所需小图/img/bann4.jpeg" alt=""></div>
+	      			<div class="slide"><img src="../任务所需小图/img/bann5.jpeg" alt=""></div>
+	      			<div class="slide"><img src="../任务所需小图/img/bann6.png" alt=""></div>
+	      			<div class="slide"><img src="../任务所需小图/img/bann1.jpeg" alt=""></div>
+	      		</div> 
+	      		<span id="left"><</span>
+	      		<span id="right">></span>
+	      		<ul class="nav" id="nav">
+	      			<li class="active">1</li>
+	      			<li>2</li>
+	   				<li>3</li>
+	   				<li>4</li>
+	   				<li>5</li>
+	  				<li>6</li>
+      			</ul>    		   		
+	      	</div>
+	      </div>
+</body>
+<script type="text/javascript">
+		var slider=document.getElementById('slider');
+		var box=document.getElementById('box');
+	    var left=document.getElementById('left');
+	    var right=document.getElementById('right');
+	    var oNavlist=document.getElementById('nav').children;
+	    var index=1;
+	    box.onmouseover=function(){
+        clearInterval(timer);
+        animate(left,{opacity:50});
+        animate(right,{opacity:50});
+	    }
+	    box.onmouseout=function(){
+		    animate(left,{opacity:0});
+		    animate(right,{opacity:0});
+            timer=setInterval(next,3000);
+	    }
+	    function next(){
+	    	index++;console.log('index='+index);
+	    	animate(slider,{left:-809*index},function(){
+	    		if(index==7){
+	    			slider.style.left='-809px';
+	    			index=1;
+	    		}
+	    	});
+	    	navChange();
+	    }
+	    function prev(){
+	    	index--;
+	    	animate(slider,{left:-809*index},function(){
+	    		if(index==0)
+	    		{
+	    			slider.style.left='4854px';
+	    			index=6;
+	    		}
+	    	});
+	    	navChange();
+	    }
+	    var timer=setInterval(next,3000);
+	    right.onclick=next;
+	    left.onclick=prev;
+	    for(var i=0;i<oNavlist.length;i++)
+	    {
+		   oNavlist[i].index=i;
+		   oNavlist[i].onclick=function(){
+			index=this.index+1;
+			animate(slider,{left:-809*index});
+			navChange();
+		  }
+	    }
+	    function navChange(){
+		for(var i=0;i<oNavlist.length;i++)
+		{
+			oNavlist[i].className='';
+		}
+		if(index==7)
+		{
+			oNavlist[0].className='active';
+		}
+		else if(index==0)
+		{
+			oNavlist[5].className='active';
+		}
+		else
+		{
+			oNavlist[index-1].className='active';
+		}
+		
+	}
+	function animate(obj,json,callback){
+		clearInterval(obj.timer);
+		obj.timer = setInterval(function(){
+		var isStop = true;
+		for(var attr in json){
+				if(attr=='opacity'){
+					var now = parseInt(getStyle(obj,attr)*100);
+				}else{
+					var now = parseInt(getStyle(obj,attr));	
+				}
+				var speed = (json[attr]-now)/20;
+				// var speed = (json[attr] - now) / 8;
+				speed = speed>0?Math.ceil(speed):Math.floor(speed);
+				var current = now+speed;
+				if(json[attr]!==current){
+					isStop=false;
+				}				
+					if(attr=='opacity'){
+						obj.style[attr] = (now+speed)/100;
+					}else{
+						obj.style[attr] = now+speed+'px';
+					}									
+			}	
+			if(isStop){
+					clearInterval(obj.timer)
+					callback&&callback();
+				}	
+							
+		},10);
+		
+	}
+	function getStyle(obj,style){
+		if(getComputedStyle(obj)){
+			return getComputedStyle(obj)[style];
+		}else{
+			obj.currentStyle[style];
+		}		
+	}
+	</script>
+</html>
